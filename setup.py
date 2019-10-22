@@ -14,9 +14,7 @@ if sys.argv[-1] == "publish":
 
 here = os.path.abspath(os.path.dirname(__file__))
 about = {}
-with open(
-    os.path.join(here, "dumpall", "__version__.py"), "r", encoding="utf-8"
-) as f:
+with open(os.path.join(here, "dumpall", "__version__.py"), "r", encoding="utf-8") as f:
     exec(f.read(), about)
 
 with open("README.md", "r", encoding="utf-8") as fh:
