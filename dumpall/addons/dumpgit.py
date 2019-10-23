@@ -18,6 +18,7 @@ class Dumper(object):
         self.urls = []
 
     async def start(self):
+        """ 入口方法 """
         index_url = self.base_url + "/index"
         # 创建一个临时文件
         tmpfile = NamedTemporaryFile()
@@ -36,13 +37,14 @@ class Dumper(object):
         await self.dump()
 
     async def dump(self):
+        """ 使用map调用dump_task """
         async with Pool() as pool:
             await pool.map(self.dump_task, self.urls)
 
     async def dump_task(self, args):
+        """ 创建目录并调用fetch """
         url, filename = args
-        print("DUMP METHOD", url, filename)
-
+        click.echo("%s %s" % (url, filename))
         fullname = os.path.join(self.outdir, filename)
         outdir = os.path.dirname(fullname)
         # 创建目标目录（filename可能包含部分目录）
@@ -70,4 +72,7 @@ class Dumper(object):
                             pass
                         f.write(data)
                 except Exception as e:
+                    click.secho("Failed [%s] %s" % (resp.status, url), fg="red")
                     click.secho(e.args, fg="red")
+            else:
+                click.secho("Failed [%s] %s" % (resp.status, url), fg="red")
