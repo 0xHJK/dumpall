@@ -34,7 +34,7 @@ setuptools.setup(
     include_package_data=True,
     test_suite="tests",
     entry_points={"console_scripts": ["dumpall = dumpall.__init__:main"]},
-    # install_requires=["click"],
+    install_requires=["click", "aiohttp", "aiomultiprocess"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -46,7 +46,6 @@ setuptools.setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Topic :: Internet",
         "Topic :: Internet :: WWW/HTTP",
