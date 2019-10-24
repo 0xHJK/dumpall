@@ -9,26 +9,29 @@
 import click
 import aiohttp
 
+
 class BasicDumper(object):
     """ 基本下载类 """
+
     def __init__(self, url, outdir):
         self.url = url
         self.outdir = outdir
         self.targets = []
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36 OPR/38.0.2220.41"
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/51.0.2704.106 Safari/537.36 OPR/38.0.2220.41"
         }
 
     async def start(self):
         """ 入口方法 """
         pass
 
-    async def parse(self, url):
-        """ 从URL下载文件并解析 """
+    async def dump(self):
+        """ dump 方法 """
         pass
 
-    async def dump_task(self):
-        """ 创建目录、调用fetch、保存文件 """
+    async def download(self, target):
+        """ 下载任务（协程） """
         pass
 
     async def fetch(self, url):
@@ -46,4 +49,6 @@ class BasicDumper(object):
                 click.secho("Failed [%s] %s" % (resp.status, url), fg="red")
                 return None
 
-
+    async def parse(self, url):
+        """ 从URL下载文件并解析 """
+        pass
