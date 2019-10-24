@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 from . import __version__
 from .exceptions import UrlError
 
-addons_map = {".git": "dumpgit", ".svn": "dumpsvn", ".DS_Store": "dumpds"}
+addons_map = {".git": "gitdumper", ".svn": "svndumper", ".DS_Store": "dsdumper"}
 
 
 def banner():
