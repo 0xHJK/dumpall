@@ -61,17 +61,20 @@ class BasicDumper(object):
         """ 处理数据 """
         return data
 
-    async def fetch(self, url: str) -> tuple:
-        """ 从URL获取内容 """
+    async def fetch(self, url: str, times: int=3) -> tuple:
+        """ 从URL获取内容，如果失败默认重试三次 """
         async with aiohttp.ClientSession() as session:
             try:
                 resp = await session.get(url, headers=self.headers)
                 ret = (resp.status, await resp.content.read())
             except Exception as e:
-                # 获取内容失败
-                click.secho("Failed %s" % (url), fg="red")
-                click.secho(str(e.args), fg="red")
-                ret = (0, None)
+                if times > 0:
+                    return await self.fetch(url, times - 1)
+                else:
+                    # 获取内容失败
+                    click.secho("Failed %s" % (url), fg="red")
+                    click.secho(str(e.args), fg="red")
+                    ret = (0, None)
             return ret
 
     async def parse(self, url: str):
