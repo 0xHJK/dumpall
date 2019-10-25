@@ -41,6 +41,14 @@ dumpall -u http://example.com/.svn/
 dumpall -u http://example.com/.DS_Store
 ```
 
+.git源代码泄漏利用
+
+![0xHJK dumpall gitdumper](https://github.com/0xHJK/dumpall/blob/master/static/gitdumper.png)
+
+.svn源代码泄漏利用
+
+![0xHJK dumpall svndumper](https://github.com/0xHJK/dumpall/blob/master/static/svndumper.png)
+
 参数说明
 
 ```bash
