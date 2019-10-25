@@ -9,7 +9,7 @@ import click
 from os import path
 from urllib.parse import urlparse
 
-from . import __version__
+from .__version__ import __version__, __author__
 
 addons_map = {".git": "gitdumper", ".svn": "svndumper", ".DS_Store": "dsdumper"}
 
@@ -24,10 +24,7 @@ def banner():
 
     https://github.com/0xHJK/dumpall
     --------------------------------------------- """
-    info = "                                       v%s %s\n" % (
-        __version__.__version__,
-        __version__.__author__,
-    )
+    info = "                                       v%s %s\n" % (__version__, __author__)
     click.secho(bn, fg="cyan")
     click.echo(info)
 
@@ -46,6 +43,7 @@ def start(url: str, outdir: str):
                 break
     else:
         click.secho("URL不符合要求，请参考示例说明", fg="red")
+
 
 @click.command()
 @click.version_option()

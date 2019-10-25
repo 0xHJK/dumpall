@@ -61,7 +61,7 @@ class BasicDumper(object):
         """ 处理数据 """
         return data
 
-    async def fetch(self, url: str, times: int=3) -> tuple:
+    async def fetch(self, url: str, times: int = 3) -> tuple:
         """ 从URL获取内容，如果失败默认重试三次 """
         async with aiohttp.ClientSession() as session:
             try:
