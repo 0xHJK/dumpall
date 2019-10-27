@@ -29,7 +29,7 @@ class BasicDumper(object):
         await self.dump()
 
     async def dump(self):
-        """ DUMP核心方法，解析索引，创建进程池，调用download """
+        """ DUMP核心方法，解析索引，创建任务池，调用download """
         pass
 
     async def download(self, target: tuple):
@@ -39,8 +39,14 @@ class BasicDumper(object):
         # 创建目标目录（filename可能包含部分目录）
         fullname = os.path.join(self.outdir, filename)
         outdir = os.path.dirname(fullname)
-        if outdir and not os.path.exists(outdir):
-            os.makedirs(outdir)
+        if outdir:
+            if not os.path.exists(outdir):
+                os.makedirs(outdir)
+            elif os.path.isfile(outdir):
+                # 如果之前已经作为文件写入了，则需要删除
+                click.secho("%s is a file. It will be removed." % outdir, fg="yellow")
+                os.remove(outdir)
+                os.makedirs(outdir)
 
         # 获取数据
         status, data = await self.fetch(url)
@@ -49,13 +55,21 @@ class BasicDumper(object):
             click.secho("[%s] %s %s" % (status, url, filename), fg="red")
             return
 
+        click.secho("[%s] %s %s" % (status, url, filename), fg="green")
+
         # 处理数据（如有必要）
         data = self.convert(data)
 
         # 保存数据
-        with open(fullname, "wb") as f:
-            f.write(data)
-            click.secho("[%s] %s %s" % (status, url, filename), fg="green")
+        try:
+            with open(fullname, "wb") as f:
+                f.write(data)
+        except IsADirectoryError:
+            # 多协程/线程/进程下，属于正常情况
+            pass
+        except Exception as e:
+            click.secho("[Failed] %s %s" % (url, filename), fg="red")
+            click.secho(str(e.args), fg="red")
 
     def convert(self, data: bytes) -> bytes:
         """ 处理数据 """
@@ -63,6 +77,7 @@ class BasicDumper(object):
 
     async def fetch(self, url: str, times: int = 3) -> tuple:
         """ 从URL获取内容，如果失败默认重试三次 """
+        # TODO：下载大文件需要优化
         async with aiohttp.ClientSession() as session:
             try:
                 resp = await session.get(url, headers=self.headers)
