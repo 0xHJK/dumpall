@@ -1,5 +1,11 @@
 # Dump all
 
+![Dump all](https://github.com/0xHJK/dumpall/raw/master/static/dumpall.png)
+
+> ⚠️ 警告：仅用于学习或已授权的测试，禁止用于非法用途，否则后果自负。
+
+> ⚠️ WARNING: For study or authorized testing only. Prohibit the illegal use，or at your peril.
+
 [Dumpall](https://github.com/0xHJK/dumpall) 是一款信息泄漏/源代码泄漏利用工具，适用于以下场景：
 
 - [x] `.git`源代码泄漏
