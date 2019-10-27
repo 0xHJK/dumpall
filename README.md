@@ -1,16 +1,18 @@
 # Dump all
 
-[dumpall](https://github.com/0xHJK/dumpall)是一款信息泄漏/源代码泄漏利用工具，适用于以下场景：
+[Dumpall](https://github.com/0xHJK/dumpall) 是一款信息泄漏/源代码泄漏利用工具，适用于以下场景：
 
 - [x] `.git`源代码泄漏
 - [x] `.svn`源代码泄漏
-- [ ] `.DS_Store`信息泄漏
+- [x] `.DS_Store`信息泄漏
 
 特点
 - 支持多种泄漏情况利用
+- 基于Python3，使用asyncio异步处理
 - 请求失败时自动重发请求
-- 基于Python3，使用asyncio
 - 多进程+多协程，速度超快
+
+项目地址：<https://github.com/0xHJK/dumpall>
 
 > 在macOS下的Python 3.7中测试通过，建议使用Python 3.7+
 
@@ -51,14 +53,29 @@ Options:
   --help             Show this message and exit.
 ```
 
-.git源代码泄漏利用
+`.git`源代码泄漏利用
 
-![0xHJK dumpall gitdumper](https://github.com/0xHJK/dumpall/blob/master/static/gitdumper.png)
+![0xHJK dumpall gitdumper](https://github.com/0xHJK/dumpall/raw/master/static/gitdumper.png)
 
-.svn源代码泄漏利用
+`.svn`源代码泄漏利用
 
-![0xHJK dumpall svndumper](https://github.com/0xHJK/dumpall/blob/master/static/svndumper.png)
+![0xHJK dumpall svndumper](https://github.com/0xHJK/dumpall/raw/master/static/svndumper.png)
 
+`.DS_Store`信息泄漏利用
+
+![0xHJK dumpall dsdumper](https://github.com/0xHJK/dumpall/raw/master/static/dsdumper.png)
+
+## CHANGELOG
+
+- 2019-10-27 v0.2.0
+  - 优化下载方法
+  - 完成`.DS_Store`信息泄漏利用功能
+- 2019-10-24 v0.1.0
+  - 项目架构优化
+  - 完成`.svn`源代码泄漏利用功能
+- 2019-10-23
+  - 完成`.git`源代码泄漏利用功能
+- 2019-10-19 项目启动
 
 ## Credit
 
@@ -67,6 +84,7 @@ Options:
 - https://github.com/lijiejie/GitHack
 - https://github.com/admintony/svnExploit
 - https://github.com/sbp/gin
+- https://github.com/gehaxelt/Python-dsstore
 - https://github.com/aio-libs/aiohttp
 - https://github.com/jreese/aiomultiprocess
 - https://github.com/pallets/click
