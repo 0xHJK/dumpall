@@ -1,10 +1,10 @@
-# Dump all
+# Dump all: 多种泄漏格式 一种解决方式
 
 ![Dump all](https://github.com/0xHJK/dumpall/raw/master/static/dumpall.png)
 
 > ⚠️ 警告：仅用于学习或已授权的测试，禁止用于非法用途，否则后果自负。
 
-> ⚠️ WARNING: For study or authorized testing only. Prohibit the illegal use，or at your peril.
+> ⚠️ WARNING: For study or authorized testing only. Prohibit the illegal use, or at your peril.
 
 [Dumpall](https://github.com/0xHJK/dumpall) 是一款信息泄漏/源代码泄漏利用工具，适用于以下场景：
 
@@ -21,6 +21,8 @@
 项目地址：<https://github.com/0xHJK/dumpall>
 
 > 在macOS下的Python 3.7中测试通过，建议使用Python 3.7+
+>
+> 后续考虑增加其他常见的信息泄漏利用，如开发工具或服务器的配置文件等
 
 ## Quickstart
 
