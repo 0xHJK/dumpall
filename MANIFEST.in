@@ -1,1 +1,11 @@
-include LICENSE README.md
+include \
+    LICENSE \
+    MAINFEST.in \
+    *.md
+
+exclude \
+    .env* \
+    .git*
+
+prune build
+prune dist
