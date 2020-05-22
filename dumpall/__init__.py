@@ -32,26 +32,30 @@ def banner():
 def start(url: str, outdir: str):
     for k, v in addons_map.items():
         if k in url:
-            try:
-                addon = importlib.import_module(".addons." + v, __package__)
-                dumper = addon.Dumper(url, outdir)
-                asyncio.run(dumper.start())
-            except Exception as e:
-                click.secho(str(e.args), fg="red")
-                click.echo(str(traceback.format_exc()))
-            finally:
-                break
+            addon = importlib.import_module(".addons." + v, __package__)
+            break
     else:
-        click.secho("URL不符合要求，请参考示例说明", fg="red")
+        # click.secho("URL不符合要求", fg="red")
+        addon = importlib.import_module(".addons.idxdumper", __package__)
+    click.secho("Module: %s\n" % addon.__name__, fg="yellow")
+    try:
+        dumper = addon.Dumper(url, outdir)
+        asyncio.run(dumper.start())
+    except KeyboardInterrupt as e:
+        click.secho("Exit.", fg="magenta")
+        exit()
+    except Exception as e:
+        click.secho(str(e.args), fg="red")
+        click.echo(str(traceback.format_exc()))
 
 
 @click.command()
 @click.version_option()
-@click.option("-u", "--url", help="指定目标URL，支持.git/.svn/.DS_Store")
+@click.option("-u", "--url", help="指定目标URL，支持.git/.svn/.DS_Store，以及类index页面")
 @click.option("-o", "--outdir", default="", help="指定下载目录，默认目录名为主机名")
 def main(url, outdir):
     """
-    信息泄漏利用工具，适用于.git/.svn/.DS_Store
+    信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及index页面
 
     Example: dumpall -u http://example.com/.git
     """
