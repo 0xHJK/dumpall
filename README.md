@@ -11,12 +11,12 @@
 - [x] `.git`源代码泄漏
 - [x] `.svn`源代码泄漏
 - [x] `.DS_Store`信息泄漏
+- [x] 目录列出信息泄漏
 
 特点
 - 支持多种泄漏情况利用
-- 基于Python3，使用asyncio异步处理
-- 请求失败时自动重发请求
-- 多进程+多协程，速度超快
+- Dumpall使用方式简单
+- 使用asyncio异步处理速度快
 
 项目地址：<https://github.com/0xHJK/dumpall>
 
@@ -49,6 +49,7 @@ dumpall -u <url> [-o <outdir>]
 dumpall -u http://example.com/.git/
 dumpall -u http://example.com/.svn/
 dumpall -u http://example.com/.DS_Store
+dumpall -u http://example.com/
 ```
 
 参数说明
@@ -56,7 +57,7 @@ dumpall -u http://example.com/.DS_Store
 ```bash
 Options:
   --version          Show the version and exit.
-  -u, --url TEXT     指定目标URL，支持.git/.svn/.DS_Store
+  -u, --url TEXT     指定目标URL，支持.git/.svn/.DS_Store，以及index页面
   -o, --outdir TEXT  指定保存目录，默认目录名为主机名
   --help             Show this message and exit.
 ```
@@ -75,6 +76,8 @@ Options:
 
 ## CHANGELOG
 
+- 2020-05-22 v0.3.0
+  - 完成目录列出信息泄漏利用功能
 - 2019-10-27 v0.2.0
   - 优化下载方法
   - 完成`.DS_Store`信息泄漏利用功能
