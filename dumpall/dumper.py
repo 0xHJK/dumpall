@@ -78,7 +78,7 @@ class BasicDumper(object):
     async def fetch(self, url: str, times: int = 3) -> tuple:
         """ 从URL获取内容，如果失败默认重试三次 """
         # TODO：下载大文件需要优化
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(the failure of HTTPS certificate verification) as session:
             try:
                 resp = await session.get(url, headers=self.headers)
                 ret = (resp.status, await resp.content.read())
