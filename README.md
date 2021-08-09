@@ -81,13 +81,21 @@ dumpall -u http://example.com/.DS_Store
 dumpall -u http://example.com/
 ```
 
-参数说明
+帮助
 
 ```bash
+$ dumpall --help
+Usage: dumpall [OPTIONS]
+
+  信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及index页面
+
+  Example: dumpall -u http://example.com/.git
+
 Options:
   --version          Show the version and exit.
-  -u, --url TEXT     指定目标URL，支持.git/.svn/.DS_Store，以及index页面
-  -o, --outdir TEXT  指定保存目录，默认目录名为主机名
+  -u, --url TEXT     指定目标URL，支持.git/.svn/.DS_Store，以及类index页面
+  -o, --outdir TEXT  指定下载目录，默认目录名为主机名
+  -f, --force        强制下载（可能会有蜜罐风险）
   --help             Show this message and exit.
 ```
 
@@ -105,6 +113,8 @@ Options:
 
 ## 📜 History
 
+- 2021-08-09 v0.3.1
+  - 修复任意位置存储漏洞、增加蜜罐警告
 - 2020-05-22 v0.3.0
   - 完成目录列出信息泄漏利用功能
 - 2019-10-27 v0.2.0
