@@ -29,7 +29,7 @@ def banner():
     click.echo(info)
 
 
-def start(url: str, outdir: str):
+def start(url: str, outdir: str, force: bool):
     for k, v in addons_map.items():
         if k in url:
             addon = importlib.import_module(".addons." + v, __package__)
@@ -39,7 +39,7 @@ def start(url: str, outdir: str):
         addon = importlib.import_module(".addons.idxdumper", __package__)
     click.secho("Module: %s\n" % addon.__name__, fg="yellow")
     try:
-        dumper = addon.Dumper(url, outdir)
+        dumper = addon.Dumper(url, outdir, force)
         asyncio.run(dumper.start())
     except KeyboardInterrupt as e:
         click.secho("Exit.", fg="magenta")
@@ -53,7 +53,8 @@ def start(url: str, outdir: str):
 @click.version_option()
 @click.option("-u", "--url", help="指定目标URL，支持.git/.svn/.DS_Store，以及类index页面")
 @click.option("-o", "--outdir", default="", help="指定下载目录，默认目录名为主机名")
-def main(url, outdir):
+@click.option("-f", "--force", is_flag=True, help="强制下载（可能会有蜜罐风险）")
+def main(url, outdir, force):
     """
     信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及index页面
 
@@ -73,9 +74,10 @@ def main(url, outdir):
     while path.exists(outdir):
         outdir = "%s_%s" % (basedir, i)
         i += 1
+    outdir = path.abspath(outdir)
     os.makedirs(outdir)
 
     click.secho("Target: %s" % url, fg="yellow")
     click.secho("Output Directory: %s\n" % outdir, fg="yellow")
 
-    start(url, outdir)
+    start(url, outdir, force)

@@ -4,14 +4,15 @@
 import re
 import zlib
 import click
+from os import path
 from aiomultiprocess import Pool
 from ..dumper import BasicDumper
 from ..thirdparty.gin import parse
 
 
 class Dumper(BasicDumper):
-    def __init__(self, url: str, outdir: str):
-        super(Dumper, self).__init__(url, outdir)
+    def __init__(self, url: str, outdir: str, force=False):
+        super(Dumper, self).__init__(url, outdir, force)
         self.base_url = re.sub(".git.*", ".git", url)
 
     async def start(self):
@@ -30,6 +31,8 @@ class Dumper(BasicDumper):
                 if not sha1 or not filename:
                     continue
                 url = "%s/objects/%s/%s" % (self.base_url, sha1[:2], sha1[2:])
+                if not self.force and not await self.checkit(url, filename):
+                    exit()
                 self.targets.append((url, filename))
         idxfile.close()
         # 创建进程池，调用download

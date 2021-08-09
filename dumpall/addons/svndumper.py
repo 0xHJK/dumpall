@@ -15,8 +15,8 @@ from ..dumper import BasicDumper
 class Dumper(BasicDumper):
     """ .svn Dumper """
 
-    def __init__(self, url: str, outdir: str):
-        super(Dumper, self).__init__(url, outdir)
+    def __init__(self, url: str, outdir: str, force=False):
+        super(Dumper, self).__init__(url, outdir, force)
         self.base_url = re.sub(".svn.*", ".svn", url)
 
     async def start(self):
@@ -44,6 +44,8 @@ class Dumper(BasicDumper):
                 continue
             # sha1: $sha1$82e5777817f98354c205006bf7b68ffba018c1ec
             url = "%s/pristine/%s/%s.svn-base" % (self.base_url, sha1[6:8], sha1[6:])
+            if not self.force and not await self.checkit(url, filename):
+                exit()
             self.targets.append((url, filename))
         idxfile.close()
         # 创建进程池，调用download

@@ -15,9 +15,10 @@ from tempfile import NamedTemporaryFile
 class BasicDumper(object):
     """ 基本下载类 """
 
-    def __init__(self, url: str, outdir: str):
+    def __init__(self, url: str, outdir: str, force: False):
         self.url = url
         self.outdir = outdir
+        self.force = force
         self.targets = []
         self.headers = {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -37,7 +38,7 @@ class BasicDumper(object):
         url, filename = target
 
         # 创建目标目录（filename可能包含部分目录）
-        fullname = os.path.join(self.outdir, filename)
+        fullname = os.path.abspath(os.path.join(self.outdir, filename))
         outdir = os.path.dirname(fullname)
         if outdir:
             if not os.path.exists(outdir):
@@ -106,3 +107,20 @@ class BasicDumper(object):
         with open(idxfile.name, "wb") as f:
             f.write(data)
         return idxfile
+
+    async def checkit(self, url: str, filename: str) -> bool:
+        # 修复任意位置存储的漏洞
+        # https://drivertom.blogspot.com/2021/08/git.html
+        fullname = os.path.abspath(os.path.join(self.outdir, filename))
+        if not fullname.startswith(self.outdir):
+            # 如果文件超出目标位置范围
+            click.secho(
+                f"[WARNING] THIS MAY BE A HONEYPOT !!! \n[URL]: {url}\n[FILENAME]: {filename}\n",
+                fg="red",
+            )
+            try:
+                self.force = click.confirm("Do you want to continue?", abort=True)
+            except Exception as e:
+                click.secho("Abort.", fg="yellow")
+            return self.force
+        return True

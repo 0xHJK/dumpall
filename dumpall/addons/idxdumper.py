@@ -17,8 +17,8 @@ from ..dumper import BasicDumper
 class Dumper(BasicDumper):
     """ index dumper """
 
-    def __init__(self, url: str, outdir: str):
-        super(Dumper, self).__init__(url, outdir)
+    def __init__(self, url: str, outdir: str, force=False):
+        super(Dumper, self).__init__(url, outdir, force)
         self.netloc = urlparse(url).netloc
         self.fetched_urls = []
         self.task_count = 10  # 协程数量
@@ -46,7 +46,9 @@ class Dumper(BasicDumper):
             try:
                 if await self.is_html(url):
                     # 如果是html则提取链接
-                    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+                    async with aiohttp.ClientSession(
+                        connector=aiohttp.TCPConnector(verify_ssl=False)
+                    ) as session:
                         async with session.get(url, headers=self.headers) as resp:
                             d = pq(await resp.text())
                             # 遍历链接
@@ -79,6 +81,8 @@ class Dumper(BasicDumper):
 
     async def is_html(self, url) -> bool:
         """ 判断目标URL是不是属于html页面 """
-        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+        async with aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(verify_ssl=False)
+        ) as session:
             async with session.head(url, headers=self.headers) as resp:
                 return bool("html" in resp.headers.get("content-type", ""))
