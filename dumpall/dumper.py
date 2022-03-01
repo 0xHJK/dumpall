@@ -9,6 +9,7 @@
 import os
 import click
 import aiohttp
+from urllib.parse import unquote
 from tempfile import NamedTemporaryFile
 
 
@@ -36,6 +37,7 @@ class BasicDumper(object):
     async def download(self, target: tuple):
         """ 下载任务（协程） """
         url, filename = target
+        filename = unquote(filename)
 
         # 创建目标目录（filename可能包含部分目录）
         fullname = os.path.abspath(os.path.join(self.outdir, filename))
