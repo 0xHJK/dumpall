@@ -144,3 +144,7 @@ Options:
 ## 📄 License
 
 [MIT License](https://github.com/0xHJK/TotalPass/blob/master/LICENSE)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=0xHJK/dumpall&type=Date)](https://star-history.com/#0xHJK/dumpall&Date)
