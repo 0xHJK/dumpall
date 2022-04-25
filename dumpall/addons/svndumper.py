@@ -10,14 +10,15 @@ import sqlite3
 import click
 from aiomultiprocess import Pool
 from ..dumper import BasicDumper
+from ..dumper import RHB
 
 
 class Dumper(BasicDumper):
     """ .svn Dumper """
 
-    def __init__(self, url: str, outdir: str, force=False):
-        super(Dumper, self).__init__(url, outdir, force)
-        self.base_url = re.sub(".svn.*", ".svn", url)
+    def __init__(self, rhb: RHB, outdir: str, force=False):
+        super(Dumper, self).__init__(rhb, outdir, force)
+        self.base_url = re.sub(".svn.*", ".svn", rhb.url)
 
     async def start(self):
         """ dumper入口方法 """

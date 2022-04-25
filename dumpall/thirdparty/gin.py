@@ -21,7 +21,8 @@ def check(boolean, message):
 
 def parse(filename, pretty=True):
     with open(filename, "rb") as o:
-        f = mmap.mmap(o.fileno(), 0, prot=mmap.PROT_READ)
+        """修复Windows下git dump 出错，https://stackoverflow.com/questions/13500434/loading-file-in-memory-using-python"""
+        f = mmap.mmap(o.fileno(), 0, access=mmap.ACCESS_READ)
 
         def read(format):
             # "All binary numbers are in network byte order."
@@ -34,7 +35,7 @@ def parse(filename, pretty=True):
 
         # 4-byte signature, b"DIRC"
         index["signature"] = f.read(4).decode("ascii")
-        check(index["signature"] == "DIRC", "Not a Git index file")
+        check(index["signature"] == "DIRC", "Not a Git index file,")
 
         # 4-byte version number
         index["version"] = read("I")

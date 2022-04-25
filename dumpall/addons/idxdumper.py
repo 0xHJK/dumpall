@@ -8,18 +8,21 @@
 import asyncio
 import aiohttp
 import click
+from aiohttp_proxy import ProxyConnector
 from urllib.parse import urlparse, urljoin
 from asyncio.queues import Queue
 from pyquery import PyQuery as pq
 from ..dumper import BasicDumper
+from ..dumper import RHB
+import random
 
 
 class Dumper(BasicDumper):
     """ index dumper """
 
-    def __init__(self, url: str, outdir: str, force=False):
-        super(Dumper, self).__init__(url, outdir, force)
-        self.netloc = urlparse(url).netloc
+    def __init__(self, rhb: RHB, outdir: str, force=False):
+        super(Dumper, self).__init__(rhb, outdir, force)
+        self.netloc = urlparse(rhb.url).netloc
         self.fetched_urls = []
         self.task_count = 10  # 协程数量
         self.running = False
@@ -28,7 +31,7 @@ class Dumper(BasicDumper):
         """ 入口方法 """
         # queue必须创建在run()方法内 https://stackoverflow.com/questions/53724665/using-queues-results-in-asyncio-exception-got-future-future-pending-attached
         self.targets_q = Queue()  # url, name
-        await self.targets_q.put((self.url, "index"))
+        await self.targets_q.put((self.rhb.url, "index"))
         self.running = True
 
         tasks = []
@@ -46,10 +49,13 @@ class Dumper(BasicDumper):
             try:
                 if await self.is_html(url):
                     # 如果是html则提取链接
+                    connector=self.getConnection()    
                     async with aiohttp.ClientSession(
-                        connector=aiohttp.TCPConnector(verify_ssl=False)
+                        connector=connector
                     ) as session:
-                        async with session.get(url, headers=self.headers) as resp:
+                        if self.rhb.random_agent:
+                            useragent= {"User-Agent":random.choice(self.rhb.useragents)}
+                        async with session.get(url, headers=useragent) as resp:
                             d = pq(await resp.text())
                             # 遍历链接
                             for a in d("a"):
@@ -81,8 +87,13 @@ class Dumper(BasicDumper):
 
     async def is_html(self, url) -> bool:
         """ 判断目标URL是不是属于html页面 """
+        connector = self.getConnection() 
         async with aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(verify_ssl=False)
+            connector=connector
         ) as session:
             async with session.head(url, headers=self.headers) as resp:
                 return bool("html" in resp.headers.get("content-type", ""))
+    
+    def getConnection(self):
+        
+        return super().getConnection()

@@ -7,13 +7,14 @@ import click
 from os import path
 from aiomultiprocess import Pool
 from ..dumper import BasicDumper
+from ..dumper import RHB
 from ..thirdparty.gin import parse
 
 
 class Dumper(BasicDumper):
-    def __init__(self, url: str, outdir: str, force=False):
-        super(Dumper, self).__init__(url, outdir, force)
-        self.base_url = re.sub(".git.*", ".git", url)
+    def __init__(self, rhb: RHB, outdir: str, force=False):
+        super(Dumper, self).__init__(rhb, outdir, force)
+        self.base_url = re.sub(".git.*", ".git", rhb.url)
 
     async def start(self):
         """ 入口方法 """
@@ -47,5 +48,6 @@ class Dumper(BasicDumper):
                 # Bytes正则匹配
                 data = re.sub(rb"blob \d+\x00", b"", data)
             except Exception as e:
+                # print("实质上就是文件不存在。")
                 click.secho(str(e.args), fg="red")
         return data

@@ -18,14 +18,14 @@ from urllib.parse import urlparse
 from asyncio.queues import Queue
 from ..thirdparty import dsstore
 from ..dumper import BasicDumper
-
+from ..dumper import RHB
 
 class Dumper(BasicDumper):
     """ .DS_Store dumper """
 
-    def __init__(self, url: str, outdir: str, force=False):
-        super(Dumper, self).__init__(url, outdir, force)
-        self.base_url = re.sub("/\.DS_Store.*", "", url)
+    def __init__(self, rhb: RHB, outdir: str, force=False):
+        super(Dumper, self).__init__(rhb, outdir, force)
+        self.base_url = re.sub("/\.DS_Store.*", "", rhb.url)
         self.url_queue = Queue()
 
     async def start(self):
@@ -49,7 +49,7 @@ class Dumper(BasicDumper):
         """ 从url_queue队列中读取URL，根据URL获取并解析DS_Store """
         while not self.url_queue.empty():
             base_url = await self.url_queue.get()
-            status, ds_data = await self.fetch(base_url + "/.DS_Store")
+            status, ds_data = await self.fetch(base_url + "/.DS_Store") # 递归的地方
             if status != 200 or not ds_data:
                 continue
             try:
