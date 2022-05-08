@@ -52,13 +52,13 @@ class DataBlock(object):
         Extracts a file name from the current position.
         """
         # The length of the file name in bytes.
-        length, = struct.unpack_from(">I", self.offset_read(4))
+        (length,) = struct.unpack_from(">I", self.offset_read(4))
         # The file name in UTF-16, which is two bytes per character.
         filename = self.offset_read(2 * length).decode("utf-16be")
         # A structure ID that I haven't found any use of.
-        structure_id, = struct.unpack_from(">I", self.offset_read(4))
+        (structure_id,) = struct.unpack_from(">I", self.offset_read(4))
         # Now read the structure type as a string of four characters and decode it to ascii.
-        structure_type, = struct.unpack_from(">4s", self.offset_read(4))
+        (structure_type,) = struct.unpack_from(">4s", self.offset_read(4))
 
         structure_type = structure_type.decode()
         self._log("Structure type ", structure_type)
@@ -95,7 +95,7 @@ class DataBlock(object):
             ):
                 skip = 8
             elif structure_type == "blob":
-                blen, = struct.unpack_from(">I", self.offset_read(4))
+                (blen,) = struct.unpack_from(">I", self.offset_read(4))
                 skip = blen
             elif (
                 structure_type == "ustr"
@@ -103,7 +103,7 @@ class DataBlock(object):
                 or structure_type == "extn"
                 or structure_type == "GRP0"
             ):
-                blen, = struct.unpack_from(">I", self.offset_read(4))
+                (blen,) = struct.unpack_from(">I", self.offset_read(4))
                 skip = 2 * blen
             elif structure_type == "BKGD":
                 skip = 12
@@ -134,8 +134,8 @@ class DataBlock(object):
                 self.skip(-1 * 2 * 0x4)
                 filename += self.offset_read(0x2).decode("utf-16be")
                 # re-read structure_id and structure_type
-                structure_id, = struct.unpack_from(">I", self.offset_read(4))
-                structure_type, = struct.unpack_from(">4s", self.offset_read(4))
+                (structure_id,) = struct.unpack_from(">I", self.offset_read(4))
+                (structure_type,) = struct.unpack_from(">4s", self.offset_read(4))
                 structure_type = structure_type.decode()
                 # Look-ahead and check if we have  structure_type==Iloc followed by blob.
                 # If so, we're interested in blob, not Iloc. Otherwise continue!
@@ -163,7 +163,7 @@ class DataBlock(object):
 
 class DS_Store(DataBlock, object):
     """
-    Represents the .DS_Store file from the given binary data. 
+    Represents the .DS_Store file from the given binary data.
     """
 
     def __init__(self, data, debug=False):
@@ -208,7 +208,7 @@ class DS_Store(DataBlock, object):
         """
         start_pos = self.root.pos
         # First get the number of offsets in this file.
-        count, = struct.unpack_from(">I", self.root.offset_read(4))
+        (count,) = struct.unpack_from(">I", self.root.offset_read(4))
         self._log("Offset count: {}".format(count))
         # Always appears to be zero!
         self.root.skip(4)
@@ -217,7 +217,7 @@ class DS_Store(DataBlock, object):
         offsets = []
         for i in range(count):
             # Address of the offset.
-            address, = struct.unpack_from(">I", self.root.offset_read(4))
+            (address,) = struct.unpack_from(">I", self.root.offset_read(4))
             self._log("Offset {} is {}".format(i, address))
             if address == 0:
                 # We're only interested in non-zero values
@@ -243,19 +243,19 @@ class DS_Store(DataBlock, object):
         """
         self._log("POS {}".format(hex(self.root.pos)))
         # First get the number of ToC entries.
-        count, = struct.unpack_from(">I", self.root.offset_read(4))
+        (count,) = struct.unpack_from(">I", self.root.offset_read(4))
         self._log("Toc count: {}".format(count))
         toc = {}
         # Iterate over all ToCs
         for i in range(count):
             # Get the length of a ToC's name
-            toc_len, = struct.unpack_from(">b", self.root.offset_read(1))
+            (toc_len,) = struct.unpack_from(">b", self.root.offset_read(1))
             # Read the ToC's name
-            toc_name, = struct.unpack_from(
+            (toc_name,) = struct.unpack_from(
                 ">{}s".format(toc_len), self.root.offset_read(toc_len)
             )
             # Read the address (block id) in the data section
-            block_id, = struct.unpack_from(">I", self.root.offset_read(4))
+            (block_id,) = struct.unpack_from(">I", self.root.offset_read(4))
             # Add all values to the dictionary
             toc[toc_name.decode()] = block_id
 
@@ -271,10 +271,10 @@ class DS_Store(DataBlock, object):
         for i in range(32):
             freelist[2 ** i] = []
             # Read the amount of blocks in the specific free list.
-            blkcount, = struct.unpack_from(">I", self.root.offset_read(4))
+            (blkcount,) = struct.unpack_from(">I", self.root.offset_read(4))
             for j in range(blkcount):
                 # Read blkcount block offsets.
-                free_offset, = struct.unpack_from(">I", self.root.offset_read(4))
+                (free_offset,) = struct.unpack_from(">I", self.root.offset_read(4))
                 freelist[2 ** i].append(free_offset)
 
         self._log("Freelist: {}".format(freelist))
@@ -309,14 +309,14 @@ class DS_Store(DataBlock, object):
         # Get the root block from the ToC 'DSDB'
         root = self.__block_by_id(self.toc["DSDB"])
         # Read the following root block's ID, so that we can traverse it.
-        root_id, = struct.unpack(">I", root.offset_read(4))
+        (root_id,) = struct.unpack(">I", root.offset_read(4))
         self._log("Root-ID ", root_id)
 
         # Read other values that we might be useful, but we're not interested in... (at least right now)
-        internal_block_count, = struct.unpack(">I", root.offset_read(4))
-        record_count, = struct.unpack(">I", root.offset_read(4))
-        block_count, = struct.unpack(">I", root.offset_read(4))
-        unknown, = struct.unpack(">I", root.offset_read(4))
+        (internal_block_count,) = struct.unpack(">I", root.offset_read(4))
+        (record_count,) = struct.unpack(">I", root.offset_read(4))
+        (block_count,) = struct.unpack(">I", root.offset_read(4))
+        (unknown,) = struct.unpack(">I", root.offset_read(4))
 
         # traverse from the extracted root block id.
         return self.traverse(root_id)
@@ -328,9 +328,9 @@ class DS_Store(DataBlock, object):
         # Get the responsible block by it's ID
         node = self.__block_by_id(block_id)
         # Extract the pointer to the next block
-        next_pointer, = struct.unpack(">I", node.offset_read(4))
+        (next_pointer,) = struct.unpack(">I", node.offset_read(4))
         # Get the number of next blocks or records
-        count, = struct.unpack(">I", node.offset_read(4))
+        (count,) = struct.unpack(">I", node.offset_read(4))
         self._log("Next Ptr {} with {} ".format(hex(next_pointer), hex(count)))
 
         filenames = []
@@ -339,7 +339,7 @@ class DS_Store(DataBlock, object):
         if next_pointer > 0:
             for i in range(0, count, 1):
                 # Get the block_id for the next block
-                next_id, = struct.unpack(">I", node.offset_read(4))
+                (next_id,) = struct.unpack(">I", node.offset_read(4))
                 self._log("Child: {}".format(next_id))
                 # Traverse it recursively
                 files = self.traverse(next_id)

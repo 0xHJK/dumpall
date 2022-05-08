@@ -12,20 +12,19 @@
 """
 
 import re
-import click
 import asyncio
 from urllib.parse import urlparse
 from asyncio.queues import Queue
 from ..thirdparty import dsstore
-from ..dumper import BasicDumper
-from ..dumper import RHB
+from ..dumper import BaseDumper
 
-class Dumper(BasicDumper):
+
+class Dumper(BaseDumper):
     """ .DS_Store dumper """
 
-    def __init__(self, rhb: RHB, outdir: str, force=False):
-        super(Dumper, self).__init__(rhb, outdir, force)
-        self.base_url = re.sub("/\.DS_Store.*", "", rhb.url)
+    def __init__(self, url: str, outdir: str, **kwargs):
+        super(Dumper, self).__init__(url, outdir, *kwargs)
+        self.base_url = re.sub("/\.DS_Store.*", "", url)
         self.url_queue = Queue()
 
     async def start(self):
@@ -49,7 +48,7 @@ class Dumper(BasicDumper):
         """ 从url_queue队列中读取URL，根据URL获取并解析DS_Store """
         while not self.url_queue.empty():
             base_url = await self.url_queue.get()
-            status, ds_data = await self.fetch(base_url + "/.DS_Store") # 递归的地方
+            status, ds_data = await self.fetch(base_url + "/.DS_Store")
             if status != 200 or not ds_data:
                 continue
             try:
@@ -64,4 +63,5 @@ class Dumper(BasicDumper):
                     self.targets.append((new_url, fullname))
             except Exception as e:
                 # 如果解析失败则不是DS_Store文件
-                click.secho(str(e.args), fg="red")
+                msg = "Failed to parse ds_store file"
+                self.error_log(msg=msg, e=e)
