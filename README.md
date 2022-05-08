@@ -43,7 +43,6 @@ TODO:
 
 - [ ] 支持更多利用方式
 - [ ] 优化大文件下载
-- [ ] 优化多任务调度
 - [ ] 增强绕过功能
 
 项目地址：<https://github.com/0xHJK/dumpall>
@@ -85,9 +84,9 @@ dumpall -u http://example.com/
 
 ```bash
 $ dumpall --help
-Usage: dumpall [OPTIONS]
+Usage: dumpall.py [OPTIONS]
 
-  信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及index页面
+  信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及目录列出下载
 
   Example: dumpall -u http://example.com/.git
 
@@ -95,7 +94,9 @@ Options:
   --version          Show the version and exit.
   -u, --url TEXT     指定目标URL，支持.git/.svn/.DS_Store，以及类index页面
   -o, --outdir TEXT  指定下载目录，默认目录名为主机名
+  -p, --proxy TEXT   指定代理 scheme://[user:pass@]hostname:port
   -f, --force        强制下载（可能会有蜜罐风险）
+  -d, --debug        调试模式
   --help             Show this message and exit.
 ```
 
@@ -111,8 +112,24 @@ Options:
 
 ![0xHJK dumpall dsdumper](https://github.com/0xHJK/dumpall/raw/master/static/dsdumper.png)
 
+## 🙋 FAQ
+
+1. `OSError(24, 'Too many open files'))`
+
+手动修改系统打开文件最大数量限制，如 `ulimit -n 65535`
+
+2. 旧版本SVN无法利用
+
+先用idxdumper凑合，等有空补充
+
 ## 📜 History
 
+- 2022-05-09 v0.4.0
+  - 优化基础功能，修复BUG
+  - 增加调试模式
+  - 优化多任务调度
+  - 支持代理
+  - 支持随机UserAgent
 - 2022-03-01 v0.3.2
   - 修复URL编码问题
 - 2021-08-09 v0.3.1
@@ -129,7 +146,7 @@ Options:
   - 完成`.git`源代码泄漏利用功能
 - 2019-10-19 项目启动
 
-## 🤝 Credit
+## 🤝 Contributions
 
 本项目参考或使用了以下项目，在此感谢相关开发者
 
@@ -140,6 +157,17 @@ Options:
 - https://github.com/aio-libs/aiohttp
 - https://github.com/jreese/aiomultiprocess
 - https://github.com/pallets/click
+
+感谢以下开发者的贡献
+
+- @k0ngfei
+- @nian-hua
+- @fabaff
+
+如有意愿参与项目开发，请遵循以下规范
+
+- 使用下划线命名法命名
+- 使用 <https://github.com/psf/black> 做代码格式化
 
 ## 📄 License
 
