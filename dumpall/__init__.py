@@ -56,7 +56,7 @@ def start(url: str, outdir: str, proxy: str, force: bool, debug: bool):
     "-p", "--proxy", default="", help="指定代理 scheme://[user:pass@]hostname:port"
 )
 @click.option("-f", "--force", is_flag=True, help="强制下载（可能会有蜜罐风险）")
-@click.option("-d", "--debug", is_flag=True, help="调试模式")
+@click.option("-d", "--debug", is_flag=True, help="调试模式 输出更多日志")
 def main(
     url,
     outdir,
@@ -65,7 +65,7 @@ def main(
     debug,
 ):
     """
-    信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及index页面
+    信息泄漏利用工具，适用于.git/.svn/.DS_Store，以及目录列出下载
 
     Example: dumpall -u http://example.com/.git
     """
