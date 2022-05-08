@@ -3,4 +3,3 @@ aiohttp_proxy==0.1.2
 aiomultiprocess==0.9.0
 click==7.1.2
 pyquery==1.4.3
-setuptools==41.2.0
