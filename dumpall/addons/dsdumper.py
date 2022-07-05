@@ -23,7 +23,7 @@ class Dumper(BaseDumper):
     """ .DS_Store dumper """
 
     def __init__(self, url: str, outdir: str, **kwargs):
-        super(Dumper, self).__init__(url, outdir, *kwargs)
+        super(Dumper, self).__init__(url, outdir, **kwargs)
         self.base_url = re.sub("/\.DS_Store.*", "", url)
         self.url_queue = Queue()
 
